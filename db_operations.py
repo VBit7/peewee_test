@@ -11,25 +11,28 @@ def task_7():
 
 def top_5_students_by_subject(subject_id):
     """
-    # -- Топ 5 студенів з найвищим середнім балом з певного предмета
-    #
-    # select s.student_name, s2.name_subject, avg(score) as avg_score
-    # from students s
-    # 	join grades g on s.id = g.students_id
-    # 	join subjects s2 on g.subjects_id = s2.id
-    # where s2.id = 1
-    # group by s.student_name, s2.name_subject
-    # order by avg(score) desc
-    # limit 5
+    -- Топ 5 студенів з найвищим середнім балом з певного предмета
+
+    select s.student_name, s2.name_subject, avg(score) as avg_score
+    from students s
+    	join grades g on s.id = g.students_id
+    	join subjects s2 on g.subjects_id = s2.id
+    where s2.id = 1
+    group by s.student_name, s2.name_subject
+    order by avg(score) desc
+    limit 5
     """
+
     top_students = Students.select(
-            Students.student_name,
-            Subjects.name_subject.alias("Subj_name"),
-            fn.AVG(Grages.score).alias("AVG_Score")).join(Grages).join(Subjects).where(Subjects.id==subject_id).group_by(
-                Students.student_name, Subjects.name_subject).order_by(fn.AVG(Grages.score).desc()).limit(5).get()
+        Students.student_name,
+        Subjects.name_subject,
+        fn.AVG(Grages.score).alias("AVG_Score"))\
+            .join(Grages)\
+            .join(Subjects)\
+        .where(Subjects.id == subject_id)\
+        .group_by(Students.student_name, Subjects)\
+        .order_by(fn.AVG(Grages.score).desc())\
+        .limit(5)
 
-    # print(top_students.student_name, top_students.name_subject, top_students.AVG_Score)
-    # print(top_students.)
-    print(top_students.Subj_name)
-    print(top_students.AVG_Score)
-
+    for student in top_students.objects():
+        print(student.student_name, student.name_subject, student.AVG_Score)
